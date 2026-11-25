@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="特变自动打卡·定时设置"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="所有敏感信息只在本机保存,不写入代码。输入一次后自动记住。"
+            android:textSize="13sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="18dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="① 打卡参数"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/dakaUserCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="工号(例:393143)"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textSize="14sp"
+            android:background="#F5F5F5"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/dakaCompany"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="公司代码(例:TBEA)"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textSize="14sp"
+            android:background="#F5F5F5"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/dakaIface"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="接口加密地址 interfaceapiaddress"
+            android:inputType="text"
+            android:textSize="13sp"
+            android:background="#F5F5F5"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/dakaAppid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="token 接口 appid(必填)"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textSize="14sp"
+            android:background="#F5F5F5"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/dakaSecret"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="token 接口 secret(必填)"
+            android:inputType="textPassword"
+            android:singleLine="true"
+            android:textSize="14sp"
+            android:background="#F5F5F5"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/dakaAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="打卡地址(例:陕西省西安市...)"
+            android:inputType="text"
+            android:textSize="14sp"
+            android:background="#F5F5F5"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/dakaLng"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="经度(例:108.82346558182442)"
+            android:inputType="numberDecimal"
+            android:singleLine="true"
+            android:textSize="14sp"
+            android:background="#F5F5F5"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/dakaLat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="纬度(例:34.17483930708519)"
+            android:inputType="numberDecimal"
+            android:singleLine="true"
+            android:textSize="14sp"
+            android:background="#F5F5F5"
+            android:padding="12dp"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/dakaSaveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="保存打卡参数"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="② 每天打卡时段"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+
+            <EditText
+                android:id="@+id/hourEdit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="时 0-23"
+                android:inputType="number"
+                android:singleLine="true"
+                android:textSize="14sp"
+                android:background="#F5F5F5"
+                android:padding="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":"
+                android:textSize="20sp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp" />
+
+            <EditText
+                android:id="@+id/minuteEdit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="分 0-59"
+                android:inputType="number"
+                android:singleLine="true"
+                android:textSize="14sp"
+                android:background="#F5F5F5"
+                android:padding="12dp" />
+
+            <Button
+                android:id="@+id/addTriggerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="添加"
+                android:layout_marginLeft="8dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/triggerListText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#F5F5F5"
+            android:padding="14dp"
+            android:textSize="14sp"
+            android:lineSpacingExtra="6dp"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/clearTriggerButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="清空全部时段"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="③ 测试与通知"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/testDakaButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="立即测试打卡(真实提交一次)"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/testDakaPushButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试结果推送(只发微信不打卡)"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:id="@+id/dakaStatusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#F5F5F5"
+            android:padding="16dp"
+            android:textSize="14sp"
+            android:lineSpacingExtra="6dp" />
+
+    </LinearLayout>
+</ScrollView>

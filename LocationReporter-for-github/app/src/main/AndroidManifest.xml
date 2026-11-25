@@ -27,10 +27,19 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".DakaActivity"
+            android:exported="false" />
+
         <service
             android:name=".LocationForegroundService"
             android:exported="false"
             android:foregroundServiceType="location" />
+
+        <receiver
+            android:name=".DakaAlarmReceiver"
+            android:enabled="true"
+            android:exported="false" />
 
         <receiver
             android:name=".BootReceiver"

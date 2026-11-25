@@ -88,6 +88,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="发送测试推送(验证微信是否收到)"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/dakaEntryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="特变自动打卡(参数设置/定时/测试)"
             android:layout_marginBottom="20dp" />
 
         <TextView

@@ -31,13 +31,13 @@ object PushPlusSender {
      * 注意:Python requests 会自动对中文做 URL 编码,Kotlin 这里必须手动 URLEncoder.encode,
      * 否则 content 里的中文会乱码或被截断。
      */
-    suspend fun sendWechat(token: String, msg: String): String = withContext(Dispatchers.IO) {
+    suspend fun sendWechat(token: String, msg: String, title: String = TITLE): String = withContext(Dispatchers.IO) {
         if (token.isBlank()) return@withContext "error: 未配置 token,请先在应用里输入"
         var connection: HttpURLConnection? = null
         try {
             val url = ENDPOINT +
                     "?token=" + URLEncoder.encode(token.trim(), "UTF-8") +
-                    "&title=" + URLEncoder.encode(TITLE, "UTF-8") +
+                    "&title=" + URLEncoder.encode(title, "UTF-8") +
                     "&content=" + URLEncoder.encode(msg, "UTF-8") +
                     "&template=" + URLEncoder.encode(TEMPLATE, "UTF-8")
 

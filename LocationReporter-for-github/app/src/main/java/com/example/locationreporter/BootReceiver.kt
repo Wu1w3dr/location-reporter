@@ -12,6 +12,7 @@ class BootReceiver : BroadcastReceiver() {
             action == Intent.ACTION_MY_PACKAGE_REPLACED ||
             action == "android.intent.action.QUICKBOOT_POWERON"
         ) {
+            // 恢复定位服务
             val serviceIntent = Intent(context, LocationForegroundService::class.java).apply {
                 this.action = LocationForegroundService.ACTION_START
             }
@@ -23,6 +24,12 @@ class BootReceiver : BroadcastReceiver() {
                 }
             } catch (e: Exception) {
                 // Android 12+ 后台启动前台服务受限,需在用户交互后再启动
+            }
+            // 恢复打卡定时闹钟
+            try {
+                DakaScheduler.rescheduleAll(context.applicationContext)
+            } catch (e: Exception) {
+                // 忽略
             }
         }
     }

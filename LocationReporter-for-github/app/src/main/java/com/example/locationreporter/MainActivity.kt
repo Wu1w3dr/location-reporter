@@ -52,6 +52,9 @@ class MainActivity : AppCompatActivity() {
         batteryButton = findViewById(R.id.batteryButton)
         autostartButton = findViewById(R.id.autostartButton)
         testButton = findViewById(R.id.testButton)
+        findViewById<Button>(R.id.dakaEntryButton).setOnClickListener {
+            startActivity(Intent(this, DakaActivity::class.java))
+        }
 
         // 回填已保存的 token;输入一次后重启 App 依然在
         val savedToken = TokenStore.getToken(this)
