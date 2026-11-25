@@ -223,7 +223,7 @@ class MainActivity : AppCompatActivity() {
             append("定位采集间隔: ${LocationForegroundService.REPORT_INTERVAL_MS / 1000} 秒\n")
             append("微信推送间隔: ${LocationForegroundService.PUSH_INTERVAL_MS / 1000} 秒\n")
             append("推送渠道: pushplus (${PushPlusSender.TITLE})\n")
-            append("token: ${TokenStore.maskedToken(this)}")
+            append("token: ${TokenStore.maskedToken(this@MainActivity)}")
         }
     }
 
