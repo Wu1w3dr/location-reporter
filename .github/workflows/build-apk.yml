@@ -21,11 +21,14 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Install Android SDK Platform 34
+        run: echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0"
+
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.7'
 
-      - run: gradle assembleDebug --no-daemon
+      - run: gradle assembleDebug --no-daemon --stacktrace
 
       - uses: actions/upload-artifact@v4
         with:
