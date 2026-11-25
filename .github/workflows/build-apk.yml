@@ -28,26 +28,32 @@ jobs:
         with:
           gradle-version: '8.7'
 
-      # 失败时把真正的报错行写进摘要,打开 run 页面就能直接看到
       - name: Build Debug APK
         id: build
-        continue-on-error: true
+        shell: bash
         run: |
-          set -o pipefail
+          set +e
           gradle assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
-          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> $GITHUB_OUTPUT
+          echo "gradle_exit_code=$code" | tee -a $GITHUB_STEP_SUMMARY
+          exit $code
 
-      - name: Print compile errors to summary
-        if: steps.build.outputs.exit_code != '0'
+      # 失败时把真正的编译错误逐行变成 annotation,打开 run 页面即可看到
+      - name: Expose compile errors
+        if: failure() && steps.build.outputs.exit_code != '0'
+        shell: bash
         run: |
-          echo "### 编译错误(e: 行)" >> $GITHUB_STEP_SUMMARY
+          grep -nE "^e: |error:|FAILURE:|What went wrong|Execution failed|Caused by|Unresolved reference|No files were found" build.log | head -30 | while IFS= read -r line; do
+            echo "::error::$line"
+          done
+          echo "### 编译错误" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
-          grep -nE "^e: |error:|FAILURE:|What went wrong|Execution failed|Caused by" build.log | head -40 >> $GITHUB_STEP_SUMMARY || echo "(未找到标准错误行,请展开 build 步骤看日志)" >> $GITHUB_STEP_SUMMARY
+          grep -nE "^e: |error:|FAILURE:|What went wrong|Execution failed|Caused by|Unresolved reference" build.log | head -40 >> $GITHUB_STEP_SUMMARY || true
           echo '```' >> $GITHUB_STEP_SUMMARY
-          exit 1
 
       - uses: actions/upload-artifact@v4
-        if: steps.build.outputs.exit_code == '0'
+        if: success()
         with:
           name: location-reporter-apk
           path: LocationReporter-for-github/app/build/outputs/apk/debug/*.apk
