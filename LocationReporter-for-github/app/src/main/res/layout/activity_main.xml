@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="后台实时位置上报"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="适用于小米 14 / HyperOS,锁屏后持续采集位置并通过 pushplus 推送到微信"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="pushplus token (只需输入一次,之后自动保存)"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp" />
+
+        <EditText
+            android:id="@+id/tokenEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="粘贴你的 pushplus token"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textSize="14sp"
+            android:background="#F5F5F5"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/saveTokenButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="保存 token"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#F5F5F5"
+            android:padding="16dp"
+            android:textSize="15sp"
+            android:lineSpacingExtra="6dp"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/startButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="启动后台定位"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/batteryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="加入电池优化白名单"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/autostartButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="打开自启动设置(小米)"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/testButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="发送测试推送(验证微信是否收到)"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="小米必做设置:\n1. 位置权限选「始终允许」并开启「后台定位」\n2. 省电策略改为「无限制」\n3. 打开「自启动」\n4. 下拉通知栏锁定「位置共享中」通知,不要清除\n5. 把本应用加入「内存清理白名单」"
+            android:textSize="13sp"
+            android:textColor="#444444"
+            android:lineSpacingExtra="4dp" />
+
+    </LinearLayout>
+</ScrollView>
