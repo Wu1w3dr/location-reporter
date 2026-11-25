@@ -29,7 +29,7 @@ object DakaClient {
     private const val API_URL = "https://h5tbearesource.gaiaworkforce.com/api/mobileCloud/api/POST"
     private const val UA = "Mozilla/5.0 (Linux; Android 16; 24031PN0DC Build/BP2A.250605.031.A3; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/143.0.7499.192 Mobile Safari/537.36"
 
-    suspend fun punch(cfg: DakaConfig.Snapshot): DakaResult = withContext(Dispatchers.IO) {
+    suspend fun punch(cfg: DakaConfig.Snapshot, lng: String, lat: String, address: String): DakaResult = withContext(Dispatchers.IO) {
         try {
             // appid / secret 也由用户在设置页输入,不写死在代码里
             if (cfg.appid.isBlank() || cfg.secret.isBlank()) {
@@ -88,9 +88,9 @@ object DakaClient {
             val timeStamp = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(now)
             val serverTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(now)
             val payload3 = JSONObject().apply {
-                put("Longitude", cfg.lng)
-                put("Latitude", cfg.lat)
-                put("Address", cfg.address)
+                put("Longitude", lng)
+                put("Latitude", lat)
+                put("Address", address)
                 put("Remark", "")
                 put("MachineID", "APP_GPS")
                 put("timeStamp", timeStamp)

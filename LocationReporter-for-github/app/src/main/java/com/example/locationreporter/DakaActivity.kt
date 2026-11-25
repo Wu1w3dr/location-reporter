@@ -1,12 +1,16 @@
 package com.example.locationreporter
 
+import android.Manifest
 import android.app.AlertDialog
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,13 +24,12 @@ class DakaActivity : AppCompatActivity() {
     private lateinit var iface: EditText
     private lateinit var appid: EditText
     private lateinit var secret: EditText
-    private lateinit var address: EditText
-    private lateinit var lng: EditText
-    private lateinit var lat: EditText
+    private lateinit var amapKey: EditText
     private lateinit var hourEdit: EditText
     private lateinit var minuteEdit: EditText
     private lateinit var triggerListText: TextView
     private lateinit var statusText: TextView
+    private lateinit var locationText: TextView
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
@@ -39,23 +42,19 @@ class DakaActivity : AppCompatActivity() {
         iface = findViewById(R.id.dakaIface)
         appid = findViewById(R.id.dakaAppid)
         secret = findViewById(R.id.dakaSecret)
-        address = findViewById(R.id.dakaAddress)
-        lng = findViewById(R.id.dakaLng)
-        lat = findViewById(R.id.dakaLat)
+        amapKey = findViewById(R.id.dakaAmapKey)
         hourEdit = findViewById(R.id.hourEdit)
         minuteEdit = findViewById(R.id.minuteEdit)
         triggerListText = findViewById(R.id.triggerListText)
         statusText = findViewById(R.id.dakaStatusText)
+        locationText = findViewById(R.id.locationPreviewText)
 
-        // 回填已保存配置
         userCode.setText(DakaConfig.getUserCode(this))
         company.setText(DakaConfig.getCompany(this))
         iface.setText(DakaConfig.getIface(this))
         appid.setText(DakaConfig.getAppid(this))
         secret.setText(DakaConfig.getSecret(this))
-        address.setText(DakaConfig.getAddress(this))
-        lng.setText(DakaConfig.getLng(this))
-        lat.setText(DakaConfig.getLat(this))
+        amapKey.setText(DakaConfig.getAmapKey(this))
 
         findViewById<Button>(R.id.dakaSaveButton).setOnClickListener { saveConfig() }
         findViewById<Button>(R.id.addTriggerButton).setOnClickListener { addTrigger() }
@@ -63,19 +62,66 @@ class DakaActivity : AppCompatActivity() {
         triggerListText.setOnClickListener { showDeleteDialog() }
         findViewById<Button>(R.id.testDakaButton).setOnClickListener { runDaka() }
         findViewById<Button>(R.id.testDakaPushButton).setOnClickListener { testPushOnly() }
+        findViewById<Button>(R.id.previewLocationButton).setOnClickListener { previewLocation() }
 
         refreshTriggers()
         refreshStatus()
+        ensureLocationPermission()
+    }
+
+    private fun ensureLocationPermission() {
+        val needed = mutableListOf<String>()
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            needed.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            needed.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+        if (needed.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, needed.toTypedArray(), 1003)
+        }
     }
 
     private fun saveConfig() {
         DakaConfig.save(
             this, userCode.text.toString(), appid.text.toString(), secret.text.toString(),
-            iface.text.toString(), company.text.toString(), address.text.toString(),
-            lng.text.toString(), lat.text.toString()
+            iface.text.toString(), company.text.toString(), amapKey.text.toString()
         )
         Toast.makeText(this, "打卡参数已保存到本机", Toast.LENGTH_SHORT).show()
         refreshStatus()
+    }
+
+    private fun previewLocation() {
+        if (!LocationProvider.hasPermission(this)) {
+            Toast.makeText(this, "请先授予定位权限", Toast.LENGTH_SHORT).show()
+            ensureLocationPermission()
+            return
+        }
+        val key = amapKey.text.toString().trim()
+        if (key.isBlank()) {
+            Toast.makeText(this, "请先填写高德 Web 服务 key", Toast.LENGTH_SHORT).show()
+            return
+        }
+        locationText.text = "正在定位并反查地址..."
+        scope.launch {
+            val result = withContext(Dispatchers.IO) {
+                val fix = LocationProvider.current(applicationContext)
+                if (fix == null) {
+                    "定位失败:未开启定位或长时间未取到位置"
+                } else {
+                    val addr = AmapGeocoder.reverse(key, fix.lat, fix.lng)
+                    "坐标: ${fix.display()}\n地址: ${addr ?: "高德反查失败(检查 key 与配额)"}"
+                }
+            }
+            locationText.text = result
+            Toast.makeText(this@DakaActivity, "定位预览已更新", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun addTrigger() {
@@ -138,7 +184,7 @@ class DakaActivity : AppCompatActivity() {
             Toast.makeText(this, "请先保存完整的打卡参数", Toast.LENGTH_SHORT).show()
             return
         }
-        Toast.makeText(this, "正在打卡,请稍候...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "正在定位并打卡,请稍候...", Toast.LENGTH_SHORT).show()
         scope.launch {
             val result = withContext(Dispatchers.IO) { DakaRunner.runOnce(applicationContext) }
             val msg = if (result.success) "打卡成功,结果已推送微信" else "打卡失败:${result.detail.take(120)}"
@@ -177,7 +223,8 @@ class DakaActivity : AppCompatActivity() {
         statusText.text = buildString {
             append("打卡参数:${if (ready) "已配置" else "未配置完整"}\n")
             append("工号:${DakaConfig.getUserCode(this@DakaActivity).ifBlank { "未填" }}\n")
-            append("地址:${DakaConfig.getAddress(this@DakaActivity).ifBlank { "未填" }}\n")
+            append("高德key:${DakaConfig.maskedAmapKey(this@DakaActivity)}\n")
+            append("位置来源:手机GPS/网络定位 + 高德逆地理编码\n")
             append("token: 首页保存的 pushplus token 通用\n")
             append("定时时段:${TriggerStore.summary(this@DakaActivity)}")
         }

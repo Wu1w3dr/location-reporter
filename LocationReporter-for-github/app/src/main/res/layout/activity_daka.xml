@@ -20,7 +20,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="所有敏感信息只在本机保存,不写入代码。输入一次后自动记住。"
+            android:text="所有敏感信息只在本机保存,不写入代码。经纬度用手机定位获取,地址用高德API反查。"
             android:textSize="13sp"
             android:textColor="#666666"
             android:layout_marginBottom="18dp" />
@@ -37,7 +37,7 @@
             android:id="@+id/dakaUserCode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="工号(例:393143)"
+            android:hint="工号"
             android:inputType="text"
             android:singleLine="true"
             android:textSize="14sp"
@@ -49,7 +49,7 @@
             android:id="@+id/dakaCompany"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="公司代码(例:TBEA)"
+            android:hint="公司代码"
             android:inputType="text"
             android:singleLine="true"
             android:textSize="14sp"
@@ -93,45 +93,40 @@
             android:layout_marginBottom="8dp" />
 
         <EditText
-            android:id="@+id/dakaAddress"
+            android:id="@+id/dakaAmapKey"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="打卡地址(例:陕西省西安市...)"
+            android:hint="高德开放平台 Web服务 key(用于经纬度反查地址)"
             android:inputType="text"
-            android:textSize="14sp"
-            android:background="#F5F5F5"
-            android:padding="12dp"
-            android:layout_marginBottom="8dp" />
-
-        <EditText
-            android:id="@+id/dakaLng"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="经度(例:108.82346558182442)"
-            android:inputType="numberDecimal"
             android:singleLine="true"
             android:textSize="14sp"
             android:background="#F5F5F5"
             android:padding="12dp"
             android:layout_marginBottom="8dp" />
-
-        <EditText
-            android:id="@+id/dakaLat"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="纬度(例:34.17483930708519)"
-            android:inputType="numberDecimal"
-            android:singleLine="true"
-            android:textSize="14sp"
-            android:background="#F5F5F5"
-            android:padding="12dp"
-            android:layout_marginBottom="10dp" />
 
         <Button
             android:id="@+id/dakaSaveButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="保存打卡参数"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/previewLocationButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="定位测试(取当前坐标并反查地址)"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:id="@+id/locationPreviewText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#EEF4FF"
+            android:padding="14dp"
+            android:textSize="13sp"
+            android:lineSpacingExtra="6dp"
+            android:text="尚未测试定位"
             android:layout_marginBottom="20dp" />
 
         <TextView

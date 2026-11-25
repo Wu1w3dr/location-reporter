@@ -3,8 +3,9 @@ package com.example.locationreporter
 import android.content.Context
 
 /**
- * 打卡所需的全部配置(含敏感项)。
- * 全部由用户在界面输入一次,之后存应用私有 SharedPreferences,不再写死在代码里。
+ * 打卡所需的固定配置(敏感项)。
+ * 经纬度由手机定位实时获取,打卡地址由高德逆地理编码实时获取,不再手工填写,也不写入代码。
+ * 全部由用户在界面输入一次,之后存应用私有 SharedPreferences。
  */
 object DakaConfig {
     private const val PREFS = "daka_config"
@@ -13,9 +14,7 @@ object DakaConfig {
     private const val K_SECRET = "secret"
     private const val K_IFACE = "interface_api_address"
     private const val K_COMPANY = "company_code"
-    private const val K_ADDRESS = "address"
-    private const val K_LNG = "lng"
-    private const val K_LAT = "lat"
+    private const val K_AMAP_KEY = "amap_web_key"
 
     data class Snapshot(
         val userCode: String,
@@ -23,9 +22,7 @@ object DakaConfig {
         val secret: String,
         val iface: String,
         val companyCode: String,
-        val address: String,
-        val lng: String,
-        val lat: String
+        val amapKey: String
     )
 
     private fun prefs(c: Context) =
@@ -36,13 +33,11 @@ object DakaConfig {
     fun getSecret(c: Context) = prefs(c).getString(K_SECRET, "") ?: ""
     fun getIface(c: Context) = prefs(c).getString(K_IFACE, "") ?: ""
     fun getCompany(c: Context) = prefs(c).getString(K_COMPANY, "") ?: ""
-    fun getAddress(c: Context) = prefs(c).getString(K_ADDRESS, "") ?: ""
-    fun getLng(c: Context) = prefs(c).getString(K_LNG, "") ?: ""
-    fun getLat(c: Context) = prefs(c).getString(K_LAT, "") ?: ""
+    fun getAmapKey(c: Context) = prefs(c).getString(K_AMAP_KEY, "") ?: ""
 
     fun save(
         c: Context, userCode: String, appid: String, secret: String,
-        iface: String, company: String, address: String, lng: String, lat: String
+        iface: String, company: String, amapKey: String
     ) {
         prefs(c).edit()
             .putString(K_USER, userCode.trim())
@@ -50,23 +45,20 @@ object DakaConfig {
             .putString(K_SECRET, secret.trim())
             .putString(K_IFACE, iface.trim())
             .putString(K_COMPANY, company.trim())
-            .putString(K_ADDRESS, address.trim())
-            .putString(K_LNG, lng.trim())
-            .putString(K_LAT, lat.trim())
+            .putString(K_AMAP_KEY, amapKey.trim())
             .apply()
     }
 
     fun snapshot(c: Context) = Snapshot(
-        getUserCode(c), getAppid(c), getSecret(c), getIface(c),
-        getCompany(c), getAddress(c), getLng(c), getLat(c)
+        getUserCode(c), getAppid(c), getSecret(c), getIface(c), getCompany(c), getAmapKey(c)
     )
 
-    /** 打卡所需的全部参数都必须由用户填好,代码里不保留任何默认值。 */
+    /** 打卡所需的固定参数都必须填好,代码里不保留任何默认值。 */
     fun isReady(c: Context): Boolean {
         val s = snapshot(c)
         return s.userCode.isNotBlank() && s.iface.isNotBlank() &&
-                s.companyCode.isNotBlank() && s.appid.isNotBlank() && s.secret.isNotBlank() &&
-                s.address.isNotBlank() && s.lng.isNotBlank() && s.lat.isNotBlank()
+                s.companyCode.isNotBlank() && s.appid.isNotBlank() &&
+                s.secret.isNotBlank() && s.amapKey.isNotBlank()
     }
 
     fun maskedSecret(c: Context): String {
@@ -75,6 +67,15 @@ object DakaConfig {
             s.isEmpty() -> "未配置"
             s.length <= 6 -> "******"
             else -> "${s.take(3)}****${s.takeLast(3)}"
+        }
+    }
+
+    fun maskedAmapKey(c: Context): String {
+        val s = getAmapKey(c)
+        return when {
+            s.isEmpty() -> "未配置"
+            s.length <= 8 -> s
+            else -> "${s.take(6)}...${s.takeLast(4)}"
         }
     }
 }

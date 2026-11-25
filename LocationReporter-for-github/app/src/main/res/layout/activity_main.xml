@@ -12,7 +12,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="后台实时位置上报"
+            android:text="特变自动打卡"
             android:textSize="22sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -20,7 +20,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="适用于小米 14 / HyperOS,锁屏后持续采集位置并通过 pushplus 推送到微信"
+            android:text="每天多个时段自动打卡。经纬度取手机定位,地址由高德API反查,结果推送微信。适用于小米 14 / HyperOS。"
             android:textSize="14sp"
             android:textColor="#666666"
             android:layout_marginBottom="20dp" />
@@ -63,10 +63,10 @@
             android:layout_marginBottom="20dp" />
 
         <Button
-            android:id="@+id/startButton"
+            android:id="@+id/dakaEntryButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="启动后台定位"
+            android:text="进入自动打卡设置(参数/时段/测试)"
             android:layout_marginBottom="12dp" />
 
         <Button
@@ -88,19 +88,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="发送测试推送(验证微信是否收到)"
-            android:layout_marginBottom="12dp" />
-
-        <Button
-            android:id="@+id/dakaEntryButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="特变自动打卡(参数设置/定时/测试)"
             android:layout_marginBottom="20dp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="小米必做设置:\n1. 位置权限选「始终允许」并开启「后台定位」\n2. 省电策略改为「无限制」\n3. 打开「自启动」\n4. 下拉通知栏锁定「位置共享中」通知,不要清除\n5. 把本应用加入「内存清理白名单」"
+            android:text="小米必做设置:\n1. 位置权限选「始终允许」并开启「后台定位」\n2. 省电策略改为「无限制」\n3. 打开「自启动」\n4. 把本应用加入「内存清理白名单」\n注:为保证定时打卡可靠,请在「特变自动打卡」页先点一次「定位测试」,确认坐标与地址正常。"
             android:textSize="13sp"
             android:textColor="#444444"
             android:lineSpacingExtra="4dp" />
