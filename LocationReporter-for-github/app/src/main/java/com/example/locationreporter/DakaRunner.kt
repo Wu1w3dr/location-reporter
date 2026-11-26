@@ -19,37 +19,59 @@ object DakaRunner {
             return pushAndReturn(
                 context, token, false,
                 "打卡配置不完整,请先在设置页填写工号/接口地址/appid/secret/高德key",
-                "未获取", "未获取", "未获取"
+                "未获取", "未获取", "未获取", "未定位"
             )
         }
         if (!LocationProvider.hasPermission(context)) {
-            return pushAndReturn(context, token, false, "未授予定位权限,无法获取当前经纬度", "未获取", "未获取", "未获取")
+            return pushAndReturn(
+                context, token, false, "未授予定位权限,无法获取当前经纬度",
+                "未获取", "未获取", "未获取", "未定位"
+            )
         }
 
         val fix = LocationProvider.current(context)
         if (fix == null) {
-            return pushAndReturn(context, token, false, "手机定位失败(未开启定位或长时间未取到位置)", "未获取", "未获取", "未获取")
-        }
-        val lng = String.format(Locale.US, "%.6f", fix.lng)
-        val lat = String.format(Locale.US, "%.6f", fix.lat)
-
-        val cfg = DakaConfig.snapshot(context)
-        val address = AmapGeocoder.reverse(cfg.amapKey, fix.lat, fix.lng)
-        if (address == null) {
             return pushAndReturn(
-                context, token, false,
-                "高德逆地理编码失败,未取到打卡地址(检查高德 Web 服务 key 是否开通/配额是否用尽)",
-                lng, lat, "$lng,$lat"
+                context, token, false, "手机定位失败(未开启定位或长时间未取到位置)",
+                "未获取", "未获取", "未获取", "未定位"
             )
         }
 
+        val cfg = DakaConfig.snapshot(context)
+
+        // 白名单判定:定位落在某打卡点 50km 内 -> 用预设坐标与地址;否则走高德解析真实位置
+        val hit = CityMatrix.match(fix.lng, fix.lat)
+        val lng: String
+        val lat: String
+        val address: String
+        val source: String
+        if (hit != null) {
+            lng = String.format(Locale.US, "%.6f", hit.spot.lng)
+            lat = String.format(Locale.US, "%.6f", hit.spot.lat)
+            address = hit.spot.address
+            source = "白名单命中:${hit.city}(距打卡点 ${String.format(Locale.US, "%.1f", hit.distanceKm)}km),使用预设坐标与地址"
+        } else {
+            lng = String.format(Locale.US, "%.6f", fix.lng)
+            lat = String.format(Locale.US, "%.6f", fix.lat)
+            val real = AmapGeocoder.reverse(cfg.amapKey, fix.lat, fix.lng)
+            if (real == null) {
+                return pushAndReturn(
+                    context, token, false,
+                    "不在白名单 50km 内,且高德逆地理编码失败,未取到打卡地址(检查高德 Web 服务 key 是否开通/配额是否用尽)",
+                    lng, lat, "$lng,$lat", "白名单未命中"
+                )
+            }
+            address = real
+            source = "白名单未命中(>50km),使用真实定位坐标 + 高德解析地址"
+        }
+
         val result = DakaClient.punch(cfg, lng, lat, address)
-        return pushAndReturn(context, token, result.success, result.detail, lng, lat, address)
+        return pushAndReturn(context, token, result.success, result.detail, lng, lat, address, source)
     }
 
     private suspend fun pushAndReturn(
         context: Context, token: String, success: Boolean,
-        detail: String, lng: String, lat: String, address: String
+        detail: String, lng: String, lat: String, address: String, source: String
     ): DakaResult {
         val now = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
         val flag = if (success) "✅ 打卡成功" else "❌ 打卡失败"
@@ -60,8 +82,9 @@ object DakaRunner {
             append("<p style=\"margin:4px 0\"><b>$flag</b></p>")
             append("<p style=\"margin:4px 0\"><b>时间:</b> $now</p>")
             append("<p style=\"margin:4px 0\"><b>工号:</b> ${cfg.userCode}</p>")
-            append("<p style=\"margin:4px 0\"><b>地址:</b> $address</p>")
-            append("<p style=\"margin:4px 0\"><b>坐标:</b> $lng, $lat</p>")
+            append("<p style=\"margin:4px 0\"><b>打卡地址:</b> $address</p>")
+            append("<p style=\"margin:4px 0\"><b>打卡坐标:</b> $lng, $lat</p>")
+            append("<p style=\"margin:4px 0;color:#1a73e8\">$source</p>")
             append("<p style=\"margin:8px 0 0;color:#666\">${detail.take(400)}</p>")
             append("</div>")
         }

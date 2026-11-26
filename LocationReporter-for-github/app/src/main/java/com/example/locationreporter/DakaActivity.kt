@@ -108,15 +108,25 @@ class DakaActivity : AppCompatActivity() {
             Toast.makeText(this, "请先填写高德 Web 服务 key", Toast.LENGTH_SHORT).show()
             return
         }
-        locationText.text = "正在定位并反查地址..."
+        locationText.text = "正在定位并判定打卡点..."
         scope.launch {
             val result = withContext(Dispatchers.IO) {
                 val fix = LocationProvider.current(applicationContext)
                 if (fix == null) {
                     "定位失败:未开启定位或长时间未取到位置"
                 } else {
-                    val addr = AmapGeocoder.reverse(key, fix.lat, fix.lng)
-                    "坐标: ${fix.display()}\n地址: ${addr ?: "高德反查失败(检查 key 与配额)"}"
+                    val hit = CityMatrix.match(fix.lng, fix.lat)
+                    if (hit != null) {
+                        "真实坐标: ${fix.display()}\n" +
+                                "白名单命中: ${hit.city}(距打卡点 ${"%.1f".format(hit.distanceKm)}km)\n" +
+                                "打卡将使用预设坐标: ${"%.6f".format(hit.spot.lng)}, ${"%.6f".format(hit.spot.lat)}\n" +
+                                "打卡地址: ${hit.spot.address}"
+                    } else {
+                        val addr = AmapGeocoder.reverse(key, fix.lat, fix.lng)
+                        "真实坐标: ${fix.display()}\n" +
+                                "白名单未命中(50km内无打卡点)\n" +
+                                "打卡将使用真实坐标 + 高德地址: ${addr ?: "高德反查失败(检查 key 与配额)"}"
+                    }
                 }
             }
             locationText.text = result
